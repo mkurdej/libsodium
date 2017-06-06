@@ -5,3 +5,4 @@
 *.aps
 *.log
 !build
+Browse.VC.db
