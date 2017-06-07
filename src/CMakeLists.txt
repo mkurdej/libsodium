@@ -1,25 +1,9 @@
- # Copyright (c) 2013
- # Massimo Cetra <mcetra at gmail dot com>
- #
- # Permission to use, copy, modify, and distribute this software for any
- # purpose with or without fee is hereby granted, provided that the above
- # copyright notice and this permission notice appear in all copies.
- #
- # THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- # WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- # MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- # ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- ##
+set(SODIUM_LIBRARY_VERSION_MAJOR 4)
+set(SODIUM_LIBRARY_VERSION_MINOR 2)
+set(DLL_VERSION 4)
+set(VERSION 0.${SODIUM_LIBRARY_VERSION_MAJOR}.${SODIUM_LIBRARY_VERSION_MINOR})
 
-SET(SODIUM_LIBRARY_VERSION_MAJOR 4)
-SET(SODIUM_LIBRARY_VERSION_MINOR 2)
-SET(DLL_VERSION 4)
-SET(VERSION 0.${SODIUM_LIBRARY_VERSION_MAJOR}.${SODIUM_LIBRARY_VERSION_MINOR} )
-
-SET(SODIUM_LIBRARY_VERSION=7:0:3)
+set(SODIUM_LIBRARY_VERSION=7:0:3)
 #                      | | |
 #               +------+ | +---+
 #               |        |     |
@@ -33,68 +17,66 @@ SET(SODIUM_LIBRARY_VERSION=7:0:3)
 #               +- increment if interfaces have been added, removed or changed
 
 
-IF(CMAKE_BUILD_TYPE MATCHES debug)
-    MESSAGE(STATUS "Enabling DEBUG build")
-    SET(ENABLE_DEBUG 1)
-ENDIF(CMAKE_BUILD_TYPE MATCHES debug)
+if(CMAKE_BUILD_TYPE MATCHES debug)
+    message(STATUS "Enabling DEBUG build")
+    set(ENABLE_DEBUG 1)
+endif()
 
 # ******************************************************************************
 # ************************** MACRO DEFINITION **********************************
 # ******************************************************************************
 
-INCLUDE(CheckCCompilerFlag)
+include(CheckCCompilerFlag)
 
-MACRO(PROJECT_CHECK_COMPILER_FLAGS)
-    SET(CF)
+macro(PROJECT_CHECK_COMPILER_FLAGS)
+    set(CF)
 
-    FOREACH(flag ${ARGN})
-        SET(FLAG_NAME   "-${flag}")
-        SET(FLAG_OPTION "_${flag}")
+    foreach(flag ${ARGN})
+        set(FLAG_NAME   "-${flag}")
+        set(FLAG_OPTION "_${flag}")
 
-        CHECK_C_COMPILER_FLAG("${FLAG_NAME}" ${FLAG_OPTION})
-        IF(${FLAG_OPTION})
-            SET(CF "${CF} ${FLAG_NAME}")
-        #    MESSAGE(STATUS "Enabling compiler flag '${flag}'")
-        #ELSE(${FLAG_OPTION})
-        #    MESSAGE(STATUS "Not Enabling compiler flag '${flag}'")
-        ENDIF(${FLAG_OPTION})
+        check_c_compiler_flag("${FLAG_NAME}" ${FLAG_OPTION})
+        if(${FLAG_OPTION})
+            set(CF "${CF} ${FLAG_NAME}")
+        #    message(STATUS "Enabling compiler flag '${flag}'")
+        #else()
+        #    message(STATUS "Not Enabling compiler flag '${flag}'")
+        endif()
 
-    ENDFOREACH(flag)
+    endforeach(flag)
 
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CF}")
-ENDMACRO(PROJECT_CHECK_COMPILER_FLAGS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CF}")
+endmacro(PROJECT_CHECK_COMPILER_FLAGS)
 
 # ******************************************************************************
 # **************************  ENDIANESS TESTS  *********************************
 # ******************************************************************************
 
-INCLUDE(TestBigEndian)
+include(TestBigEndian)
 
-IF(CMAKE_TEST_ENDIANESS_STRINGS_LE)
-    ADD_DEFINITIONS("-DNATIVE_LITTLE_ENDIAN=1")
-ENDIF(CMAKE_TEST_ENDIANESS_STRINGS_LE)
+if(CMAKE_TEST_ENDIANESS_STRINGS_LE)
+    add_definitions("-DNATIVE_LITTLE_ENDIAN=1")
+endif()
 
-IF(CMAKE_TEST_ENDIANESS_STRINGS_BE)
-    ADD_DEFINITIONS("-DNATIVE_BIG_ENDIAN=1")
-ENDIF(CMAKE_TEST_ENDIANESS_STRINGS_BE)
+if(CMAKE_TEST_ENDIANESS_STRINGS_BE)
+    add_definitions("-DNATIVE_BIG_ENDIAN=1")
+endif()
 
 # ******************************************************************************
 # ************************ COMPILE CHECKS CHECKS *******************************
 # ******************************************************************************
 
-PROJECT_CHECK_COMPILER_FLAGS(
+project_check_compiler_flags(
     std=c99
-    fPIC
-    fvisibility=hidden
+    fPIC fvisibility=hidden
     fwrapv
     fno-strict-aliasing
     fno-strict-overflow
 )
 
-
-SET(__TMP ${CMAKE_REQUIRED_LIBRARIES})
-SET(CMAKE_REQUIRED_LIBRARIES "m")
-CHECK_C_SOURCE_COMPILES(
+set(__TMP ${CMAKE_REQUIRED_LIBRARIES})
+set(CMAKE_REQUIRED_LIBRARIES "m")
+check_c_source_compiles(
     "
     #include <fenv.h>
     #pragma STDC FENV_ACCESS ON
@@ -104,38 +86,39 @@ CHECK_C_SOURCE_COMPILES(
     fesetround(FE_TONEAREST);
     fesetround(previous_rounding_mode);
     };
-    " AVAIL_FENV_H)
-SET(CMAKE_REQUIRED_LIBRARIES ${__TMP})
-
+    "
+    AVAIL_FENV_H
+)
+set(CMAKE_REQUIRED_LIBRARIES ${__TMP})
 
 # test wether it is a x86 machine and as/gas is available
-SET(CAN_USE_ASSEMBLER FALSE)
-SET(CMAKE_ASM_SOURCE_FILE_EXTENSIONS "s;S")
-ENABLE_LANGUAGE(ASM)
-IF(CMAKE_ASM_COMPILER_WORKS)
-    SET(CAN_USE_ASSEMBLER TRUE)
-    MESSAGE(STATUS "ASM compiler found")
-ELSE(CMAKE_ASM_COMPILER_WORKS)
-    MESSAGE(STATUS "ASM compiler not found")
-ENDIF(CMAKE_ASM_COMPILER_WORKS)
+set(CAN_USE_ASSEMBLER FALSE)
+set(CMAKE_ASM_SOURCE_FILE_EXTENSIONS "s;S")
+enable_language(ASM)
+if(CMAKE_ASM_COMPILER_WORKS)
+    set(CAN_USE_ASSEMBLER TRUE)
+    message(STATUS "ASM compiler found")
+else()
+    message(STATUS "ASM compiler not found")
+endif()
 
+if(CAN_USE_ASSEMBLER)
+    check_c_source_compiles(
+        "
+        int main(void) {
+        #if defined(__amd64) || defined(__amd64__) || defined(__x86_64__)
+        /* neat */
+        #else
+        # error !amd64
+        #endif
+        __asm__(\"pxor %xmm12,%xmm6\");
+        };
+        "
+        AVAIL_AMD64_ASM
+    )
+endif()
 
-IF(CAN_USE_ASSEMBLER)
-CHECK_C_SOURCE_COMPILES(
-    "
-    int main(void) {
-    #if defined(__amd64) || defined(__amd64__) || defined(__x86_64__)
-    /* neat */
-    #else
-    # error !amd64
-    #endif
-    __asm__(\"pxor %xmm12,%xmm6\");
-    };
-    " AVAIL_AMD64_ASM)
-ENDIF(CAN_USE_ASSEMBLER)
-
-
-CHECK_C_SOURCE_COMPILES(
+check_c_source_compiles(
     "
     int main(void) {
     #ifndef __GNUC__
@@ -148,48 +131,39 @@ CHECK_C_SOURCE_COMPILES(
     uint128_t x;
     (void) x;
     };
-    " AVAIL_TI_MODE)
+    "
+    AVAIL_TI_MODE
+)
 
+if(AVAIL_FENV_H)
+    message(STATUS "* Floating-point rounding mode is accessible")
+endif()
 
-IF(AVAIL_FENV_H)
-    MESSAGE(STATUS "* Floating-point rounding mode is accessible")
-ENDIF(AVAIL_FENV_H)
+if(AVAIL_AMD64_ASM)
+    message(STATUS "* Basic amd64 code can be assembled")
+endif()
 
-IF(AVAIL_AMD64_ASM)
-    MESSAGE(STATUS "* Basic amd64 code can be assembled")
-ENDIF(AVAIL_AMD64_ASM)
-
-IF(AVAIL_TI_MODE)
-    MESSAGE(STATUS "* GCC TI mode is available")
-ENDIF(AVAIL_TI_MODE)
-
+if(AVAIL_TI_MODE)
+    message(STATUS "* GCC TI mode is available")
+endif()
 
 # ******************************************************************************
 # *********************** COMPILER FLAGS CHECKS ********************************
 # ******************************************************************************
 
-ADD_DEFINITIONS("-D_FORTIFY_SOURCE=2")
+add_definitions("-D_FORTIFY_SOURCE=2")
 
-PROJECT_CHECK_COMPILER_FLAGS(
-    Wall
-    Wdiv-by-zero
-    Wextra
-    Winit-self
-    Wsometimes-uninitialized
-    Wstrict-prototypes
-    Wunused
-    Wwrite-strings
-
-)
+project_check_compiler_flags(Wall Wdiv-by-zero Wextra Winit-self
+  Wsometimes-uninitialized Wstrict-prototypes Wunused Wwrite-strings)
 
 # ******************************************************************************
 # ********************* COMMAND LINE FLAGS CHECKS ******************************
 # ******************************************************************************
 
-IF(ENABLE_DEBUG)
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g3")
-    ADD_DEFINITIONS("-DDEBUG=1")
-    PROJECT_CHECK_COMPILER_FLAGS(
+if(ENABLE_DEBUG)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g3")
+    add_definitions("-DDEBUG=1")
+    project_check_compiler_flags(
         Wno-unknown-warning-option
         Wbad-function-cast
         Wcast-align
@@ -210,107 +184,95 @@ IF(ENABLE_DEBUG)
         Wswitch-enum
         Wvariable-decl
     )
-ELSE(ENABLE_DEBUG)
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -fomit-frame-pointer")
-ENDIF(ENABLE_DEBUG)
+else()
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -fomit-frame-pointer")
+endif()
 
-MESSAGE(STATUS "---------------------------------------------------" )
+message(STATUS "---------------------------------------------------")
 
-IF(NOT DISABLE_SSP)
-    CHECK_C_COMPILER_FLAG("-fstack-protector" WITH_SSP)
-    CHECK_C_COMPILER_FLAG("-fstack-protector-all" WITH_SSP_ALL)
-    IF(WITH_SSP_ALL)
-        MESSAGE(STATUS "Enabling stack protector-all")
-        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector-all")
-    ELSE(WITH_SSP_ALL)
-        IF(WITH_SSP)
-            MESSAGE(STATUS "Enabling stack protector")
-            SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector")
-        ENDIF(WITH_SSP)
-    ENDIF(WITH_SSP_ALL)
-ELSE(NOT DISABLE_SSP)
-    MESSAGE(STATUS "Disabling SSP")
-ENDIF(NOT DISABLE_SSP)
+if(NOT DISABLE_SSP)
+    check_c_compiler_flag("-fstack-protector" WITH_SSP)
+    check_c_compiler_flag("-fstack-protector-all" WITH_SSP_ALL)
+    if(WITH_SSP_ALL)
+        message(STATUS "Enabling stack protector-all")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector-all")
+    else()
+        if(WITH_SSP)
+            message(STATUS "Enabling stack protector")
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector")
+        endif()
+    endif()
+else()
+    message(STATUS "Disabling SSP")
+endif()
 
+#if(NOT DISABLE_PIE)
+#    check_c_compiler_flag("-fPIE" WITH_FPIE)
+#    if(WITH_FPIE)
+#        message(STATUS "Enabling -fPIE")
+#        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIE")
+#        set(_LINKER_OPTIONS "-pie")
+#    endif()
+#else()
+#    message(STATUS "Disabling PIE")
+#endif()
 
-#IF(NOT DISABLE_PIE)
-#    CHECK_C_COMPILER_FLAG("-fPIE" WITH_FPIE)
-#    IF(WITH_FPIE)
-#        MESSAGE(STATUS "Enabling -fPIE")
-#        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIE")
-#        SET(_LINKER_OPTIONS "-pie")
-#    ENDIF(WITH_FPIE)
-#ELSE(NOT DISABLE_PIE)
-#    MESSAGE(STATUS "Disabling PIE")
-#ENDIF(NOT DISABLE_PIE)
+if(NOT DISABLE_ASM AND AVAIL_AMD64_ASM)
+    set(HAVE_AMD64_ASM_V 1)
+    add_definitions("-DHAVE_AMD64_ASM=1 -DHAVE_AMD64_ASM_V=1")
+    message(STATUS "Enabling ASM")
+else()
+    set(HAVE_AMD64_ASM_V 0)
+    message(STATUS "Disabling ASM")
+endif()
 
+if(ENABLE_BLOCKING_RANDOM)
+    add_definitions("-DUSE_BLOCKING_RANDOM=1")
+    message(STATUS "Enabling random blocking")
+endif()
 
-IF(NOT DISABLE_ASM AND AVAIL_AMD64_ASM)
-    SET(HAVE_AMD64_ASM_V 1)
-    ADD_DEFINITIONS("-DHAVE_AMD64_ASM=1 -DHAVE_AMD64_ASM_V=1")
-    MESSAGE(STATUS "Enabling ASM")
-ELSE(NOT DISABLE_ASM AND AVAIL_AMD64_ASM)
-    SET(HAVE_AMD64_ASM_V 0)
-    MESSAGE(STATUS "Disabling ASM")
-ENDIF(NOT DISABLE_ASM AND AVAIL_AMD64_ASM)
-
-
-IF(ENABLE_BLOCKING_RANDOM)
-    ADD_DEFINITIONS("-DUSE_BLOCKING_RANDOM=1")
-    MESSAGE(STATUS "Enabling random blocking")
-ENDIF(ENABLE_BLOCKING_RANDOM)
-
-
-IF(NOT AVAIL_TI_MODE)
-    MESSAGE(STATUS "Disabling 128-bit arithmetic")
-    SET(HAVE_TI_MODE_V 0)
-ELSE(NOT AVAIL_TI_MODE)
-    MESSAGE(STATUS "Enabling 128-bit arithmetic")
-    SET(HAVE_TI_MODE_V 1)
-    ADD_DEFINITIONS("-DHAVE_TI_MODE=1")
-ENDIF(NOT AVAIL_TI_MODE)
-
-
+if(NOT AVAIL_TI_MODE)
+    message(STATUS "Disabling 128-bit arithmetic")
+    set(HAVE_TI_MODE_V 0)
+else()
+    message(STATUS "Enabling 128-bit arithmetic")
+    set(HAVE_TI_MODE_V 1)
+    add_definitions("-DHAVE_TI_MODE=1")
+endif()
 
 # ******************************************************************************
 # ******************************* BUILD PATHS **********************************
 # ******************************************************************************
 
-IF(NOT DEFINED CMAKE_SIZEOF_VOID_P)
-    MESSAGE(AUTHOR_WARNING
+if(NOT DEFINED CMAKE_SIZEOF_VOID_P)
+    message(AUTHOR_WARNING
         "Unable to determine default CMAKE_INSTALL_LIBDIR directory because no target architecture is known. "
         "Please enable at least one language before including GNUInstallDirs.")
-ENDIF(NOT DEFINED CMAKE_SIZEOF_VOID_P)
+endif()
 
-IF(NOT LIBSODIUM_DIR)
-    SET(LIBSODIUM_DIR /opt/libsodium)
-ENDIF(NOT LIBSODIUM_DIR)
+if(NOT LIBSODIUM_DIR)
+    set(LIBSODIUM_DIR /opt/libsodium)
+endif()
 
-IF(NOT LIBSODIUM_INCLUDE_DIR)
-    SET(LIBSODIUM_INCLUDE_DIR ${LIBSODIUM_DIR}/include)
-ENDIF(NOT LIBSODIUM_INCLUDE_DIR)
+if(NOT LIBSODIUM_INCLUDE_DIR)
+    set(LIBSODIUM_INCLUDE_DIR ${LIBSODIUM_DIR}/include)
+endif()
 
-IF(NOT LIBSODIUM_LIB_DIR)
-    SET(LIBSODIUM_LIB_DIR ${LIBSODIUM_DIR}/lib)
+if(NOT LIBSODIUM_LIB_DIR)
+    set(LIBSODIUM_LIB_DIR ${LIBSODIUM_DIR}/lib)
 
-    IF  ("${CMAKE_SIZEOF_VOID_P}" EQUAL "4")
-        SET(LIBSODIUM_LIB_DIR ${LIBSODIUM_DIR}/lib32)
-    ENDIF  ("${CMAKE_SIZEOF_VOID_P}" EQUAL "4")
+    if("${CMAKE_SIZEOF_VOID_P}" EQUAL "4")
+        set(LIBSODIUM_LIB_DIR ${LIBSODIUM_DIR}/lib32)
+    endif()
 
-    IF("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
-        SET(LIBSODIUM_LIB_DIR ${LIBSODIUM_DIR}/lib64)
-    ENDIF("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+    if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+        set(LIBSODIUM_LIB_DIR ${LIBSODIUM_DIR}/lib64)
+    endif()
+endif()
 
-ENDIF(NOT LIBSODIUM_LIB_DIR)
+message(STATUS "---------------------------------------------------")
+message(STATUS "LIBSODIUM PREFIX:      " ${LIBSODIUM_DIR})
+message(STATUS "LIBSODIUM INCLUDE DIR: " ${LIBSODIUM_INCLUDE_DIR})
+message(STATUS "LIBSODIUM LIB DIR:     " ${LIBSODIUM_LIB_DIR})
 
-MESSAGE(STATUS "---------------------------------------------------" )
-MESSAGE(STATUS "LIBSODIUM PREFIX:      " ${LIBSODIUM_DIR} )
-MESSAGE(STATUS "LIBSODIUM INCLUDE DIR: " ${LIBSODIUM_INCLUDE_DIR} )
-MESSAGE(STATUS "LIBSODIUM LIB DIR:     " ${LIBSODIUM_LIB_DIR} )
-
-# ******************************************************************************
-# ******************************************************************************
-# ******************************************************************************
-
-ADD_SUBDIRECTORY(libsodium)
-
+add_subdirectory(libsodium)

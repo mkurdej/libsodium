@@ -112,8 +112,8 @@ endif()
 if(NOT HAVE_AMD64_ASM_V)
     message(STATUS "AMD64 ASM disabled")
     list(APPEND _SOURCES
-	crypto_stream/salsa20/ref/salsa20_ref.c
-	crypto_stream/salsa20/ref/salsa20_ref.h
+        crypto_stream/salsa20/ref/salsa20_ref.c
+        crypto_stream/salsa20/ref/salsa20_ref.h
     )
 else()
     message(STATUS "AMD64 ASM enabled")
@@ -130,50 +130,50 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/include/sodium
 )
 
-add_library(
-    libsodium SHARED
+add_library(libsodium SHARED
     ${_SOURCES}
 )
 
-set_target_properties(
-    libsodium
+set_target_properties(libsodium
     PROPERTIES
-    PREFIX ""
-    PROJECT_LABEL "libsodium"
-    INSTALL_RPATH "${LIBSODIUM_LIB_DIR}"
-    LINK_FLAGS "${_LINKER_OPTIONS}"
-    VERSION   "${SODIUM_LIBRARY_VERSION_MAJOR}.${SODIUM_LIBRARY_VERSION_MINOR}"
-    SOVERSION "${SODIUM_LIBRARY_VERSION_MAJOR}"
+        PREFIX ""
+        PROJECT_LABEL "libsodium"
+        INSTALL_RPATH "${LIBSODIUM_LIB_DIR}"
+        LINK_FLAGS "${_LINKER_OPTIONS}"
+        VERSION "${SODIUM_LIBRARY_VERSION_MAJOR}.${SODIUM_LIBRARY_VERSION_MINOR}"
+        SOVERSION "${SODIUM_LIBRARY_VERSION_MAJOR}"
 )
 
-install(
-    TARGETS
-    libsodium
-    PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-    LIBRARY DESTINATION ${LIBSODIUM_LIB_DIR}
-    ARCHIVE DESTINATION ${LIBSODIUM_LIB_DIR}
+install(TARGETS libsodium
+    PERMISSIONS
+    OWNER_WRITE
+    OWNER_READ
+    OWNER_EXECUTE
+    GROUP_READ
+    GROUP_EXECUTE
+    WORLD_READ
+    WORLD_EXECUTE
+    LIBRARY
+    DESTINATION ${LIBSODIUM_LIB_DIR}
+    ARCHIVE
+    DESTINATION ${LIBSODIUM_LIB_DIR}
 )
 
-# *****************************************************************
-
-add_library(
-    libsodium-static STATIC
+add_library(libsodium-static STATIC
     ${_SOURCES}
 )
 
-set_target_properties(
-    libsodium-static
+set_target_properties(libsodium-static
     PROPERTIES
-    OUTPUT_NAME libsodium
-    LINK_FLAGS "${_LINKER_OPTIONS}"
+        OUTPUT_NAME libsodium
+        LINK_FLAGS "${_LINKER_OPTIONS}"
 )
 
-install(
-    TARGETS
-    libsodium-static
-    PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+install(TARGETS libsodium-static
+    PERMISSIONS
+        OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
     LIBRARY DESTINATION ${LIBSODIUM_LIB_DIR}
     ARCHIVE DESTINATION ${LIBSODIUM_LIB_DIR}
-)
+  )
 
 add_subdirectory(include)

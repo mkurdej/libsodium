@@ -67,7 +67,10 @@ set(_HEADERS_IN
 
 foreach(HEADER ${_HEADERS_IN})
     string(REGEX MATCH "(.*)[/\\]" DIR ${HEADER})
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${HEADER} DESTINATION ${LIBSODIUM_INCLUDE_DIR}/${DIR})
+    install(
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/${HEADER}
+        DESTINATION ${LIBSODIUM_INCLUDE_DIR}/${DIR}
+    )
 endforeach(HEADER ${HEADERS})
 
 add_subdirectory(sodium)
