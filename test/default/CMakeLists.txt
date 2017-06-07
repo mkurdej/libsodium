@@ -1,5 +1,4 @@
-
-INCLUDE_DIRECTORIES(
+include_directories(
     ${LIBSODIUM_SOURCE_INCLUDE_DIR}
     ${LIBSODIUM_SOURCE_INCLUDE_DIR}/sodium
     ${LIBSODIUM_BINARY_INCLUDE_DIR}
@@ -8,67 +7,80 @@ INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_SOURCE_DIR}/../quirks
 )
 
-ADD_DEFINITIONS("-DTEST_SRCDIR=\"${CMAKE_CURRENT_SOURCE_DIR}\"")
+add_definitions("-DTEST_SRCDIR=\"${CMAKE_CURRENT_SOURCE_DIR}\"")
 
-# ************************************************************
-
-MACRO(PROJECT_ADD_TEST TNAME)
-    ADD_EXECUTABLE(
-	${TNAME}
-	    cmptest.h
-	    ${TNAME}.c
+macro(PROJECT_ADD_TEST TNAME)
+    add_executable(${TNAME}
+        cmptest.h
+        ${TNAME}.c
     )
 
-    TARGET_LINK_LIBRARIES(
-	${TNAME}
-	    libsodium-static
+    target_link_libraries(${TNAME}
+        libsodium-static
     )
 
-    ADD_TEST(
-	NAME ${TNAME}
-	COMMAND ${TNAME}
+    add_test(
+        NAME ${TNAME}
+        COMMAND ${TNAME}
     )
-ENDMACRO(PROJECT_ADD_TEST)
+endmacro()
 
-# ************************************************************
-
-PROJECT_ADD_TEST(auth)
-PROJECT_ADD_TEST(auth2)
-PROJECT_ADD_TEST(auth3)
-PROJECT_ADD_TEST(auth5)
-PROJECT_ADD_TEST(box)
-PROJECT_ADD_TEST(box2)
-PROJECT_ADD_TEST(box7)
-PROJECT_ADD_TEST(box8)
-PROJECT_ADD_TEST(core1)
-PROJECT_ADD_TEST(core2)
-PROJECT_ADD_TEST(core3)
-PROJECT_ADD_TEST(core4)
-PROJECT_ADD_TEST(core5)
-PROJECT_ADD_TEST(core6)
-PROJECT_ADD_TEST(generichash)
-PROJECT_ADD_TEST(generichash2)
-PROJECT_ADD_TEST(hash)
-PROJECT_ADD_TEST(hash3)
-PROJECT_ADD_TEST(onetimeauth)
-PROJECT_ADD_TEST(onetimeauth2)
-PROJECT_ADD_TEST(onetimeauth7)
-PROJECT_ADD_TEST(randombytes)
-PROJECT_ADD_TEST(scalarmult)
-PROJECT_ADD_TEST(scalarmult2)
-PROJECT_ADD_TEST(scalarmult5)
-PROJECT_ADD_TEST(scalarmult6)
-PROJECT_ADD_TEST(secretbox)
-PROJECT_ADD_TEST(secretbox2)
-PROJECT_ADD_TEST(secretbox7)
-PROJECT_ADD_TEST(secretbox8)
-PROJECT_ADD_TEST(shorthash)
-PROJECT_ADD_TEST(sodium_core)
-PROJECT_ADD_TEST(sodium_utils)
-PROJECT_ADD_TEST(sodium_version)
-PROJECT_ADD_TEST(stream)
-PROJECT_ADD_TEST(stream2)
-PROJECT_ADD_TEST(stream3)
-PROJECT_ADD_TEST(stream4)
-PROJECT_ADD_TEST(stream5)
-PROJECT_ADD_TEST(stream6)
+project_add_test(aead_aes256gcm)
+project_add_test(aead_chacha20poly1305)
+project_add_test(aead_xchacha20poly1305)
+project_add_test(auth)
+project_add_test(auth2)
+project_add_test(auth3)
+project_add_test(auth5)
+project_add_test(auth6)
+project_add_test(auth7)
+project_add_test(box)
+project_add_test(box2)
+project_add_test(box7)
+project_add_test(box8)
+project_add_test(box_easy)
+project_add_test(box_easy2)
+project_add_test(box_seal)
+project_add_test(box_seed)
+project_add_test(chacha20)
+project_add_test(core1)
+project_add_test(core2)
+project_add_test(core3)
+project_add_test(core4)
+project_add_test(core5)
+project_add_test(core6)
+project_add_test(ed25519_convert)
+project_add_test(generichash)
+project_add_test(generichash2)
+project_add_test(generichash3)
+project_add_test(hash)
+project_add_test(hash3)
+project_add_test(kdf)
+project_add_test(keygen)
+project_add_test(kx)
+project_add_test(onetimeauth)
+project_add_test(onetimeauth2)
+project_add_test(onetimeauth7)
+project_add_test(pwhash)
+project_add_test(randombytes)
+project_add_test(scalarmult)
+project_add_test(scalarmult2)
+project_add_test(scalarmult5)
+project_add_test(scalarmult6)
+project_add_test(scalarmult7)
+project_add_test(secretbox)
+project_add_test(secretbox2)
+project_add_test(secretbox7)
+project_add_test(secretbox8)
+project_add_test(secretbox_easy)
+project_add_test(secretbox_easy2)
+project_add_test(shorthash)
+project_add_test(sign)
+project_add_test(sodium_core)
+project_add_test(sodium_utils)
+project_add_test(sodium_version)
+project_add_test(stream)
+project_add_test(stream2)
+project_add_test(stream3)
+project_add_test(stream4)
+project_add_test(verify1)

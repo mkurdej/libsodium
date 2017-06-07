@@ -1,3 +1,1 @@
-
-ADD_SUBDIRECTORY(default)
-
+add_subdirectory(default)

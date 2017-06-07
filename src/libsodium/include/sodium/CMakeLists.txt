@@ -16,21 +16,6 @@
  ##
 
 CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/crypto_scalarmult_curve25519.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/crypto_scalarmult_curve25519.h
-)
-
-CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/crypto_stream_salsa20.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/crypto_stream_salsa20.h
-)
-
-CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/crypto_stream_salsa20.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/crypto_stream_salsa20.h
-)
-
-CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/version.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/version.h
 )
