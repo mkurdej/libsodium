@@ -45,3 +45,25 @@ In order to join, just send a random mail to `sodium-subscribe` {at}
 ## License
 
 [ISC license](https://en.wikipedia.org/wiki/ISC_license).
+
+## Installation with CMake
+
+Sodium supports CMake.
+
+To use CMake (hopefully you will choose for an out-of-tree build) the steps are as follows:
+
+    mkdir build
+    cd build
+    cmake ../
+    make -j4 install
+
+You can eventually pass to CMake some options. Particularly:
+
+- CMAKE_BUILD_TYPE_TOLOWER=debug
+- ENABLE_BLOCKING_RANDOM=1
+- DISABLE_SSP=1
+- DISABLE_ASM=1
+
+You should prepend each option with -D such as:
+
+    cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_SSP=1 -DENABLE_ASM=1
