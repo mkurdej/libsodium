@@ -185,7 +185,15 @@ if(ENABLE_DEBUG)
         Wvariable-decl
     )
 else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -fomit-frame-pointer")
+    if(MSVC)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Ox") # Selects full optimization.
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Oy") # Suppresses creation of frame pointers on the call stack.
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4255") # no function prototype given: converting '' to ''
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4668") # is not defined as a preprocessor macro, replacing with '0' for '#if/#elif'
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4820") # bytes padding added after data member
+    else()
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -fomit-frame-pointer")
+    endif()
 endif()
 
 message(STATUS "---------------------------------------------------")
