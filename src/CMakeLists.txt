@@ -189,6 +189,9 @@ else()
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Ox") # Selects full optimization.
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Oy") # Suppresses creation of frame pointers on the call stack.
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4255") # no function prototype given: converting '' to ''
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4324") # structure was padded due to alignment specifier
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4456") # declaration of '' hides previous local declaration
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4464") # relative include path contains '..'
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4668") # is not defined as a preprocessor macro, replacing with '0' for '#if/#elif'
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4820") # bytes padding added after data member
     else()
