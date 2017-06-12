@@ -185,6 +185,12 @@ if(NOT MINIMAL)
     )
 endif()
 
+# AES
+list(APPEND _SOURCES
+	crypto_aead/aes256gcm/aesni/aead_aes256gcm_aesni.c
+)
+
+# SSE2
 list(APPEND _SOURCES
 	crypto_pwhash/scryptsalsa208sha256/sse/pwhash_scryptsalsa208sha256_sse.c
 	crypto_onetimeauth/poly1305/sse2/poly1305_sse2.c
@@ -200,11 +206,6 @@ if(NOT HAVE_AMD64_ASM)
         crypto_stream/salsa20/xmm6int/u4.h
     )
 endif()
-
-# AES
-list(APPEND _SOURCES
-	crypto_aead/aes256gcm/aesni/aead_aes256gcm_aesni.c
-)
 
 # SSSE3
 list(APPEND _SOURCES
