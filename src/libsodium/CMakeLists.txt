@@ -281,7 +281,6 @@ add_library(libsodium-static STATIC
 
 set_target_properties(libsodium-static
     PROPERTIES
-        OUTPUT_NAME libsodium
         LINK_FLAGS "${_LINKER_OPTIONS}"
 )
 
