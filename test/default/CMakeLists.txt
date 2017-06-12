@@ -19,6 +19,8 @@ macro(PROJECT_ADD_TEST TNAME)
         libsodium-static
     )
 
+    set_target_properties(${TNAME} PROPERTIES FOLDER "Tests")
+
     add_test(
         NAME ${TNAME}
         COMMAND ${TNAME}
