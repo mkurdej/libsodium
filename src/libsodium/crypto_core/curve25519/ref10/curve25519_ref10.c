@@ -386,38 +386,38 @@ fe_tobytes(unsigned char *s, const fe h)
      Goal: Output h0+...+2^230 h9.
      */
 
-    s[0]  = h0 >> 0;
-    s[1]  = h0 >> 8;
-    s[2]  = h0 >> 16;
-    s[3]  = (h0 >> 24) | (h1 * ((uint32_t) 1 << 2));
-    s[4]  = h1 >> 6;
-    s[5]  = h1 >> 14;
-    s[6]  = (h1 >> 22) | (h2 * ((uint32_t) 1 << 3));
-    s[7]  = h2 >> 5;
-    s[8]  = h2 >> 13;
-    s[9]  = (h2 >> 21) | (h3 * ((uint32_t) 1 << 5));
-    s[10] = h3 >> 3;
-    s[11] = h3 >> 11;
-    s[12] = (h3 >> 19) | (h4 * ((uint32_t) 1 << 6));
-    s[13] = h4 >> 2;
-    s[14] = h4 >> 10;
-    s[15] = h4 >> 18;
-    s[16] = h5 >> 0;
-    s[17] = h5 >> 8;
-    s[18] = h5 >> 16;
-    s[19] = (h5 >> 24) | (h6 * ((uint32_t) 1 << 1));
-    s[20] = h6 >> 7;
-    s[21] = h6 >> 15;
-    s[22] = (h6 >> 23) | (h7 * ((uint32_t) 1 << 3));
-    s[23] = h7 >> 5;
-    s[24] = h7 >> 13;
-    s[25] = (h7 >> 21) | (h8 * ((uint32_t) 1 << 4));
-    s[26] = h8 >> 4;
-    s[27] = h8 >> 12;
-    s[28] = (h8 >> 20) | (h9 * ((uint32_t) 1 << 6));
-    s[29] = h9 >> 2;
-    s[30] = h9 >> 10;
-    s[31] = h9 >> 18;
+    s[0]  = (char) (h0 >> 0);
+    s[1]  = (char) (h0 >> 8);
+    s[2]  = (char) (h0 >> 16);
+    s[3]  = (char) ((h0 >> 24) | (h1 * ((uint32_t) 1 << 2)));
+    s[4]  = (char) (h1 >> 6);
+    s[5]  = (char) (h1 >> 14);
+    s[6]  = (char) ((h1 >> 22) | (h2 * ((uint32_t) 1 << 3)));
+    s[7]  = (char) (h2 >> 5);
+    s[8]  = (char) (h2 >> 13);
+    s[9]  = (char) ((h2 >> 21) | (h3 * ((uint32_t) 1 << 5)));
+    s[10] = (char) (h3 >> 3);
+    s[11] = (char) (h3 >> 11);
+    s[12] = (char) ((h3 >> 19) | (h4 * ((uint32_t) 1 << 6)));
+    s[13] = (char) (h4 >> 2);
+    s[14] = (char) (h4 >> 10);
+    s[15] = (char) (h4 >> 18);
+    s[16] = (char) (h5 >> 0);
+    s[17] = (char) (h5 >> 8);
+    s[18] = (char) (h5 >> 16);
+    s[19] = (char) ((h5 >> 24) | (h6 * ((uint32_t) 1 << 1)));
+    s[20] = (char) (h6 >> 7);
+    s[21] = (char) (h6 >> 15);
+    s[22] = (char) ((h6 >> 23) | (h7 * ((uint32_t) 1 << 3)));
+    s[23] = (char) (h7 >> 5);
+    s[24] = (char) (h7 >> 13);
+    s[25] = (char) ((h7 >> 21) | (h8 * ((uint32_t) 1 << 4)));
+    s[26] = (char) (h8 >> 4);
+    s[27] = (char) (h8 >> 12);
+    s[28] = (char) ((h8 >> 20) | (h9 * ((uint32_t) 1 << 6)));
+    s[29] = (char) (h9 >> 2);
+    s[30] = (char) (h9 >> 10);
+    s[31] = (char) (h9 >> 18);
 }
 
 /*
@@ -1372,12 +1372,12 @@ slide(signed char *r, const unsigned char *a)
                     ribs = r[i + b] << b;
                     cmp = r[i] + ribs;
                     if (cmp <= 15) {
-                        r[i] = cmp;
+                        r[i] = (char) cmp;
                         r[i + b] = 0;
                     } else {
                         cmp = r[i] - ribs;
                         if (cmp >= -15) {
-                            r[i] = cmp;
+                            r[i] = (char) cmp;
                             for (k = i + b; k < 256; ++k) {
                                 if (!r[k]) {
                                     r[k] = 1;
@@ -1633,7 +1633,7 @@ equal(signed char b, signed char c)
     y -= 1;   /* 4294967295: yes; 0..254: no */
     y >>= 31; /* 1: yes; 0: no */
 
-    return y;
+    return (unsigned char) y;
 }
 
 static unsigned char
@@ -1644,7 +1644,7 @@ negative(signed char b)
 
     x >>= 63; /* 1: yes; 0: no */
 
-    return x;
+    return (unsigned char) x;
 }
 
 static void
@@ -2367,38 +2367,38 @@ sc_muladd(unsigned char *s, const unsigned char *a, const unsigned char *b,
     s11 += carry10;
     s10 -= carry10 * ((uint64_t) 1L << 21);
 
-    s[0]  = s0 >> 0;
-    s[1]  = s0 >> 8;
-    s[2]  = (s0 >> 16) | (s1 * ((uint64_t) 1 << 5));
-    s[3]  = s1 >> 3;
-    s[4]  = s1 >> 11;
-    s[5]  = (s1 >> 19) | (s2 * ((uint64_t) 1 << 2));
-    s[6]  = s2 >> 6;
-    s[7]  = (s2 >> 14) | (s3 * ((uint64_t) 1 << 7));
-    s[8]  = s3 >> 1;
-    s[9]  = s3 >> 9;
-    s[10] = (s3 >> 17) | (s4 * ((uint64_t) 1 << 4));
-    s[11] = s4 >> 4;
-    s[12] = s4 >> 12;
-    s[13] = (s4 >> 20) | (s5 * ((uint64_t) 1 << 1));
-    s[14] = s5 >> 7;
-    s[15] = (s5 >> 15) | (s6 * ((uint64_t) 1 << 6));
-    s[16] = s6 >> 2;
-    s[17] = s6 >> 10;
-    s[18] = (s6 >> 18) | (s7 * ((uint64_t) 1 << 3));
-    s[19] = s7 >> 5;
-    s[20] = s7 >> 13;
-    s[21] = s8 >> 0;
-    s[22] = s8 >> 8;
-    s[23] = (s8 >> 16) | (s9 * ((uint64_t) 1 << 5));
-    s[24] = s9 >> 3;
-    s[25] = s9 >> 11;
-    s[26] = (s9 >> 19) | (s10 * ((uint64_t) 1 << 2));
-    s[27] = s10 >> 6;
-    s[28] = (s10 >> 14) | (s11 * ((uint64_t) 1 << 7));
-    s[29] = s11 >> 1;
-    s[30] = s11 >> 9;
-    s[31] = s11 >> 17;
+    s[0]  = (unsigned char) (s0 >> 0);
+    s[1]  = (unsigned char) (s0 >> 8);
+    s[2]  = (unsigned char) ((s0 >> 16) | (s1 * ((uint64_t) 1 << 5)));
+    s[3]  = (unsigned char) (s1 >> 3);
+    s[4]  = (unsigned char) (s1 >> 11);
+    s[5]  = (unsigned char) ((s1 >> 19) | (s2 * ((uint64_t) 1 << 2)));
+    s[6]  = (unsigned char) (s2 >> 6);
+    s[7]  = (unsigned char) ((s2 >> 14) | (s3 * ((uint64_t) 1 << 7)));
+    s[8]  = (unsigned char) (s3 >> 1);
+    s[9]  = (unsigned char) (s3 >> 9);
+    s[10] = (unsigned char) ((s3 >> 17) | (s4 * ((uint64_t) 1 << 4)));
+    s[11] = (unsigned char) (s4 >> 4);
+    s[12] = (unsigned char) (s4 >> 12);
+    s[13] = (unsigned char) ((s4 >> 20) | (s5 * ((uint64_t) 1 << 1)));
+    s[14] = (unsigned char) (s5 >> 7);
+    s[15] = (unsigned char) ((s5 >> 15) | (s6 * ((uint64_t) 1 << 6)));
+    s[16] = (unsigned char) (s6 >> 2);
+    s[17] = (unsigned char) (s6 >> 10);
+    s[18] = (unsigned char) ((s6 >> 18) | (s7 * ((uint64_t) 1 << 3)));
+    s[19] = (unsigned char) (s7 >> 5);
+    s[20] = (unsigned char) (s7 >> 13);
+    s[21] = (unsigned char) (s8 >> 0);
+    s[22] = (unsigned char) (s8 >> 8);
+    s[23] = (unsigned char) ((s8 >> 16) | (s9 * ((uint64_t) 1 << 5)));
+    s[24] = (unsigned char) (s9 >> 3);
+    s[25] = (unsigned char) (s9 >> 11);
+    s[26] = (unsigned char) ((s9 >> 19) | (s10 * ((uint64_t) 1 << 2)));
+    s[27] = (unsigned char) (s10 >> 6);
+    s[28] = (unsigned char) ((s10 >> 14) | (s11 * ((uint64_t) 1 << 7)));
+    s[29] = (unsigned char) (s11 >> 1);
+    s[30] = (unsigned char) (s11 >> 9);
+    s[31] = (unsigned char) (s11 >> 17);
 }
 
 /*
@@ -2701,36 +2701,36 @@ sc_reduce(unsigned char *s)
     s11 += carry10;
     s10 -= carry10 * ((uint64_t) 1L << 21);
 
-    s[0]  = s0 >> 0;
-    s[1]  = s0 >> 8;
-    s[2]  = (s0 >> 16) | (s1 * ((uint64_t) 1 << 5));
-    s[3]  = s1 >> 3;
-    s[4]  = s1 >> 11;
-    s[5]  = (s1 >> 19) | (s2 * ((uint64_t) 1 << 2));
-    s[6]  = s2 >> 6;
-    s[7]  = (s2 >> 14) | (s3 * ((uint64_t) 1 << 7));
-    s[8]  = s3 >> 1;
-    s[9]  = s3 >> 9;
-    s[10] = (s3 >> 17) | (s4 * ((uint64_t) 1 << 4));
-    s[11] = s4 >> 4;
-    s[12] = s4 >> 12;
-    s[13] = (s4 >> 20) | (s5 * ((uint64_t) 1 << 1));
-    s[14] = s5 >> 7;
-    s[15] = (s5 >> 15) | (s6 * ((uint64_t) 1 << 6));
-    s[16] = s6 >> 2;
-    s[17] = s6 >> 10;
-    s[18] = (s6 >> 18) | (s7 * ((uint64_t) 1 << 3));
-    s[19] = s7 >> 5;
-    s[20] = s7 >> 13;
-    s[21] = s8 >> 0;
-    s[22] = s8 >> 8;
-    s[23] = (s8 >> 16) | (s9 * ((uint64_t) 1 << 5));
-    s[24] = s9 >> 3;
-    s[25] = s9 >> 11;
-    s[26] = (s9 >> 19) | (s10 * ((uint64_t) 1 << 2));
-    s[27] = s10 >> 6;
-    s[28] = (s10 >> 14) | (s11 * ((uint64_t) 1 << 7));
-    s[29] = s11 >> 1;
-    s[30] = s11 >> 9;
-    s[31] = s11 >> 17;
+    s[0]  = (unsigned char) (s0 >> 0);
+    s[1]  = (unsigned char) (s0 >> 8);
+    s[2]  = (unsigned char) ((s0 >> 16) | (s1 * ((uint64_t) 1 << 5)));
+    s[3]  = (unsigned char) (s1 >> 3);
+    s[4]  = (unsigned char) (s1 >> 11);
+    s[5]  = (unsigned char) ((s1 >> 19) | (s2 * ((uint64_t) 1 << 2)));
+    s[6]  = (unsigned char) (s2 >> 6);
+    s[7]  = (unsigned char) ((s2 >> 14) | (s3 * ((uint64_t) 1 << 7)));
+    s[8]  = (unsigned char) (s3 >> 1);
+    s[9]  = (unsigned char) (s3 >> 9);
+    s[10] = (unsigned char) ((s3 >> 17) | (s4 * ((uint64_t) 1 << 4)));
+    s[11] = (unsigned char) (s4 >> 4);
+    s[12] = (unsigned char) (s4 >> 12);
+    s[13] = (unsigned char) ((s4 >> 20) | (s5 * ((uint64_t) 1 << 1)));
+    s[14] = (unsigned char) (s5 >> 7);
+    s[15] = (unsigned char) ((s5 >> 15) | (s6 * ((uint64_t) 1 << 6)));
+    s[16] = (unsigned char) (s6 >> 2);
+    s[17] = (unsigned char) (s6 >> 10);
+    s[18] = (unsigned char) ((s6 >> 18) | (s7 * ((uint64_t) 1 << 3)));
+    s[19] = (unsigned char) (s7 >> 5);
+    s[20] = (unsigned char) (s7 >> 13);
+    s[21] = (unsigned char) (s8 >> 0);
+    s[22] = (unsigned char) (s8 >> 8);
+    s[23] = (unsigned char) ((s8 >> 16) | (s9 * ((uint64_t) 1 << 5)));
+    s[24] = (unsigned char) (s9 >> 3);
+    s[25] = (unsigned char) (s9 >> 11);
+    s[26] = (unsigned char) ((s9 >> 19) | (s10 * ((uint64_t) 1 << 2)));
+    s[27] = (unsigned char) (s10 >> 6);
+    s[28] = (unsigned char) ((s10 >> 14) | (s11 * ((uint64_t) 1 << 7)));
+    s[29] = (unsigned char) (s11 >> 1);
+    s[30] = (unsigned char) (s11 >> 9);
+    s[31] = (unsigned char) (s11 >> 17);
 }
