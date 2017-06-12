@@ -1,3 +1,5 @@
+add_definitions(-DSODIUM_DLL_EXPORT)
+
 set(_SOURCES
     crypto_aead/chacha20poly1305/sodium/aead_chacha20poly1305.c
     crypto_aead/xchacha20poly1305/sodium/aead_xchacha20poly1305.c
@@ -95,7 +97,23 @@ set(_SOURCES
     sodium/version.c
 )
 
-if(NOT HAVE_TI_MODE_V )
+if(NOT EMSCRIPTEN)
+    list(APPEND _SOURCES
+        randombytes/salsa20/randombytes_salsa20_random.c
+    )
+
+    if(NATIVECLIENT)
+        list(APPEND _SOURCES
+            randombytes/nativeclient/randombytes_nativeclient.c
+        )
+    else()
+        list(APPEND _SOURCES
+            randombytes/sysrandom/randombytes_sysrandom.c
+        )
+    endif()
+endif()
+
+if(NOT HAVE_TI_MODE_V)
     message(STATUS "TI_MODE disabled")
     list(APPEND _SOURCES
         crypto_scalarmult/curve25519/ref10/x25519_ref10.c
@@ -123,6 +141,99 @@ else()
         crypto_stream/salsa20/xmm6/salsa20_xmm6.h
     )
 endif()
+
+if(HAVE_AVX_ASM)
+    list(APPEND _SOURCES
+        crypto_scalarmult/curve25519/sandy2x/consts_namespace.h
+        crypto_scalarmult/curve25519/sandy2x/curve25519_sandy2x.c
+        crypto_scalarmult/curve25519/sandy2x/curve25519_sandy2x.h
+        crypto_scalarmult/curve25519/sandy2x/fe.h
+        crypto_scalarmult/curve25519/sandy2x/fe51.h
+        crypto_scalarmult/curve25519/sandy2x/fe51_invert.c
+        crypto_scalarmult/curve25519/sandy2x/fe51_namespace.h
+        crypto_scalarmult/curve25519/sandy2x/fe_frombytes_sandy2x.c
+        crypto_scalarmult/curve25519/sandy2x/ladder.h
+        crypto_scalarmult/curve25519/sandy2x/ladder_base.h
+        crypto_scalarmult/curve25519/sandy2x/ladder_base_namespace.h
+        crypto_scalarmult/curve25519/sandy2x/ladder_namespace.h
+        crypto_scalarmult/curve25519/sandy2x/sandy2x.S
+    )
+endif()
+
+if(NOT MINIMAL)
+    list(APPEND _SOURCES
+        crypto_box/curve25519xchacha20poly1305/box_curve25519xchacha20poly1305.c
+        crypto_secretbox/xchacha20poly1305/secretbox_xchacha20poly1305.c
+        crypto_shorthash/siphash24/shorthash_siphashx24.c
+        crypto_shorthash/siphash24/ref/shorthash_siphashx24_ref.c
+        crypto_sign/ed25519/ref10/obsolete.c
+        crypto_stream/aes128ctr/nacl/afternm_aes128ctr.c
+        crypto_stream/aes128ctr/nacl/beforenm_aes128ctr.c
+        crypto_stream/aes128ctr/nacl/common.h
+        crypto_stream/aes128ctr/nacl/consts.h
+        crypto_stream/aes128ctr/nacl/consts_aes128ctr.c
+        crypto_stream/aes128ctr/nacl/int128.h
+        crypto_stream/aes128ctr/nacl/int128_aes128ctr.c
+        crypto_stream/aes128ctr/nacl/stream_aes128ctr_nacl.c
+        crypto_stream/aes128ctr/nacl/xor_afternm_aes128ctr.c
+        crypto_stream/aes128ctr/stream_aes128ctr.c
+        crypto_stream/salsa2012/ref/stream_salsa2012_ref.c
+        crypto_stream/salsa2012/stream_salsa2012.c
+        crypto_stream/salsa208/ref/stream_salsa208_ref.c
+        crypto_stream/salsa208/stream_salsa208.c
+        crypto_stream/xchacha20/stream_xchacha20.c
+    )
+endif()
+
+list(APPEND _SOURCES
+	crypto_pwhash/scryptsalsa208sha256/sse/pwhash_scryptsalsa208sha256_sse.c
+	crypto_onetimeauth/poly1305/sse2/poly1305_sse2.c
+	crypto_onetimeauth/poly1305/sse2/poly1305_sse2.h
+)
+
+if(NOT HAVE_AMD64_ASM)
+    list(APPEND _SOURCES
+        crypto_stream/salsa20/xmm6int/salsa20_xmm6int-sse2.c
+        crypto_stream/salsa20/xmm6int/salsa20_xmm6int-sse2.h
+        crypto_stream/salsa20/xmm6int/u0.h
+        crypto_stream/salsa20/xmm6int/u1.h
+        crypto_stream/salsa20/xmm6int/u4.h
+    )
+endif()
+
+# SSSE3
+list(APPEND _SOURCES
+    crypto_generichash/blake2b/ref/blake2b-compress-ssse3.c
+    crypto_generichash/blake2b/ref/blake2b-compress-ssse3.h
+    crypto_pwhash/argon2/argon2-fill-block-ssse3.c
+    crypto_pwhash/argon2/blamka-round-ssse3.h
+    crypto_stream/chacha20/dolbeau/chacha20_dolbeau-ssse3.c
+    crypto_stream/chacha20/dolbeau/chacha20_dolbeau-ssse3.h
+    crypto_stream/chacha20/dolbeau/u0.h
+    crypto_stream/chacha20/dolbeau/u1.h
+    crypto_stream/chacha20/dolbeau/u4.h
+)
+
+#SSE4.1
+list(APPEND _SOURCES
+    crypto_generichash/blake2b/ref/blake2b-compress-sse41.c
+    crypto_generichash/blake2b/ref/blake2b-compress-sse41.h
+)
+
+#AVX2
+list(APPEND _SOURCES
+	crypto_generichash/blake2b/ref/blake2b-compress-avx2.c
+	crypto_generichash/blake2b/ref/blake2b-compress-avx2.h
+	crypto_stream/chacha20/dolbeau/chacha20_dolbeau-avx2.c
+	crypto_stream/chacha20/dolbeau/chacha20_dolbeau-avx2.h
+	crypto_stream/chacha20/dolbeau/u8.h
+	crypto_stream/salsa20/xmm6int/salsa20_xmm6int-avx2.c
+	crypto_stream/salsa20/xmm6int/salsa20_xmm6int-avx2.h
+	crypto_stream/salsa20/xmm6int/u0.h
+	crypto_stream/salsa20/xmm6int/u1.h
+	crypto_stream/salsa20/xmm6int/u4.h
+	crypto_stream/salsa20/xmm6int/u8.h
+)
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
