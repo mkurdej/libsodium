@@ -37,7 +37,7 @@ crypto_stream_salsa2012(unsigned char *c, unsigned long long clen,
         u = 1;
         for (i = 8; i < 16; ++i) {
             u += (unsigned int)in[i];
-            in[i] = u;
+            in[i] = (unsigned char)u;
             u >>= 8;
         }
         clen -= 64;
