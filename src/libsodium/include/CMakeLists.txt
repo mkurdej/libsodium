@@ -54,6 +54,12 @@ set(_HEADERS
     sodium/utils.h
 )
 
+if(NATIVECLIENT)
+    list(APPEND _HEADERS
+        sodium/randombytes_nativeclient.h
+    )
+endif()
+
 foreach(HEADER ${_HEADERS})
     string(REGEX MATCH "(.*)[/\\]" DIR ${HEADER})
     install(FILES ${HEADER} DESTINATION ${LIBSODIUM_INCLUDE_DIR}/${DIR})
@@ -71,6 +77,6 @@ foreach(HEADER ${_HEADERS_IN})
         FILES ${CMAKE_CURRENT_BINARY_DIR}/${HEADER}
         DESTINATION ${LIBSODIUM_INCLUDE_DIR}/${DIR}
     )
-endforeach(HEADER ${HEADERS})
+endforeach()
 
 add_subdirectory(sodium)
