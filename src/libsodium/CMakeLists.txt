@@ -201,6 +201,11 @@ if(NOT HAVE_AMD64_ASM)
     )
 endif()
 
+# AES
+list(APPEND _SOURCES
+	crypto_aead/aes256gcm/aesni/aead_aes256gcm_aesni.c
+)
+
 # SSSE3
 list(APPEND _SOURCES
     crypto_generichash/blake2b/ref/blake2b-compress-ssse3.c
