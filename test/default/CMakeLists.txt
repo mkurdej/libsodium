@@ -16,7 +16,7 @@ macro(PROJECT_ADD_TEST TNAME)
     )
 
     target_link_libraries(${TNAME}
-        libsodium-static
+        libsodium #-static
     )
 
     set_target_properties(${TNAME} PROPERTIES FOLDER "Tests")
